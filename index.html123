@@ -1,0 +1,62 @@
+import React, { useState } from "react";
+
+export default function SavvyIndustries() {
+  const [query, setQuery] = useState("");
+  const [widthFilter, setWidthFilter] = useState("");
+
+  const articles = [
+    { id: 2588, width: "25 mm", image: "/images/2588.jpg" },
+    { id: 2590, width: "30 mm", image: "/images/2590.jpg" },
+    { id: 2601, width: "40 mm", image: "/images/2601.jpg" }
+  ];
+
+  // Dynamic width options
+  const widthOptions = [...new Set(articles.map(a => a.width))];
+
+  const filteredArticles = articles.filter(article => {
+    const matchesQuery =
+      article.id.toString().includes(query) ||
+      article.width.toLowerCase().includes(query.toLowerCase());
+    const matchesWidth = widthFilter === "" || article.width === widthFilter;
+    return matchesQuery && matchesWidth;
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+        Savvy Industries - Articles
+      </h1>
+
+      {/* Search + Filter */}
+      <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
+        <input
+          aria-label="Search articles"
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search by article number or width..."
+          className="w-full md:w-1/2 px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <select
+          aria-label="Filter by width"
+          value={widthFilter}
+          onChange={e => setWidthFilter(e.target.value)}
+          className="w-full md:w-1/4 px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Widths</option>
+          {widthOptions.map(width => (
+            <option key={width} value={width}>{width}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Articles Grid */}
+      <div className="grid md:grid-cols-3 gap-6">
+        {filteredArticles.map(article => (
+          <div
+            key={article.id}
+            className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+          >
+            <img
+              src={article.image
